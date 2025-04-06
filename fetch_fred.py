@@ -34,6 +34,7 @@ async def fetch_latest_value(series_id):
         print(f"❌ Error fetching {series_id}: {e}")
         return None
 
+# ✅ FIXED insert block for Railway + asyncpg
 async def update_macro_data():
     conn = await connect_db()
     if not conn:
@@ -51,14 +52,14 @@ async def update_macro_data():
                 await conn.execute("""
                     INSERT INTO macro_data (indicator, value, unit, country, source, last_updated)
                     VALUES ($1, $2, $3, $4, $5, $6)
-                """, (
+                """,
                     indicator["name"],
                     value,
                     indicator["unit"],
                     "USA",
                     "FRED API",
                     datetime.datetime.now()
-                ))
+                )
                 print(f"✅ Saved: {indicator['name']} = {value}")
 
         print("✅ Macro data updated successfully.")
@@ -66,7 +67,6 @@ async def update_macro_data():
         print(f"❌ Error updating DB: {e}")
     finally:
         await conn.close()
-
 
 if __name__ == "__main__":
     import asyncio
