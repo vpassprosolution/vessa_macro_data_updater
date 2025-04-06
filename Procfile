@@ -1,0 +1,1 @@
+worker: python update_macro_data.py
