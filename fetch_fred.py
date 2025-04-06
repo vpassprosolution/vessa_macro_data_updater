@@ -29,12 +29,11 @@ async def fetch_latest_value(series_id):
             response = await client.get(url, params=params)
             data = response.json()
             latest = data["observations"][0]
-            return float(latest["value"])
+            return latest["value"]  # Return as string (not float!)
     except Exception as e:
         print(f"❌ Error fetching {series_id}: {e}")
         return None
 
-# ✅ FIXED insert block for Railway + asyncpg
 async def update_macro_data():
     conn = await connect_db()
     if not conn:
@@ -42,10 +41,8 @@ async def update_macro_data():
         return
 
     try:
-        # ✅ Delete all existing rows
         await conn.execute("DELETE FROM macro_data")
 
-        # ✅ Insert new data
         for indicator in INDICATORS:
             value = await fetch_latest_value(indicator["series_id"])
             if value is not None:
@@ -54,7 +51,7 @@ async def update_macro_data():
                     VALUES ($1, $2, $3, $4, $5, $6)
                 """,
                     indicator["name"],
-                    value,
+                    str(value),  # ✅ Cast to string to avoid PostgreSQL error
                     indicator["unit"],
                     "USA",
                     "FRED API",
