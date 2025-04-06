@@ -41,8 +41,6 @@ async def update_macro_data():
         return
 
     try:
-        cur = await conn.cursor()
-
         # ✅ Delete all existing rows
         await conn.execute("DELETE FROM macro_data")
 
@@ -68,6 +66,7 @@ async def update_macro_data():
         print(f"❌ Error updating DB: {e}")
     finally:
         await conn.close()
+
 
 if __name__ == "__main__":
     import asyncio

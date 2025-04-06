@@ -1,7 +1,7 @@
 import asyncpg
 import os
 
-DB_URL = os.getenv("DB_URL")  # Make sure you set this in Railway variables
+DB_URL = os.environ.get("DB_URL")
 
 async def connect_db():
     try:
